@@ -81,14 +81,22 @@ class Card():
         
     
 class Jugador():
-    def __init__(self,cantidad,turno):
+    def __init__(self,cantidad,cartas,equipo):
         """[summary]
 
         Args:
             cantidad ([int]): [Cantidad de jugadores]
-            turno ([Boolean]): [Dice si el turno es del jugador]
+            cartas ([list]): [Son las cartas del jugador]
         """
         self.cantidad = cantidad
-        self.turno = turno
+        self.cartas = list(cartas)
+        self.equipo = equipo
+    
+    def mano_del_jugador(self,mano):
+        """
+        Reparto y otorgo cartas al jugador y se las muestro
+        
+        """
+        
         
         

@@ -67,3 +67,28 @@ class Card():
         for carta in self.carta:
             print(carta,end= " ")
     
+        
+    def jugar_carta(self,carta_jugador):        
+        """
+        Juego la carta en la mesa.Disminuyo del jugador y aumento en la mesa
+        
+        """       
+        
+        #Le quito la carta al jugador de la mano
+        carta.carta.remove(carta_jugador)
+        
+        self.sumar_una_carta()
+        
+    
+class Jugador():
+    def __init__(self,cantidad,turno):
+        """[summary]
+
+        Args:
+            cantidad ([int]): [Cantidad de jugadores]
+            turno ([Boolean]): [Dice si el turno es del jugador]
+        """
+        self.cantidad = cantidad
+        self.turno = turno
+        
+        

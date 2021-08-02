@@ -1,3 +1,4 @@
+import numpy
 import Card
 
 class Partida():
@@ -5,7 +6,7 @@ class Partida():
     def __init__(self,jugadores):
         self.turnos = turnos
         self.jugadores = []
-        self.equipos = (Equipo1,Equipo2)
+        self.equipos = (1,2)
     
     
     def inicio_variables(self,cantidad_jugadores):
@@ -41,5 +42,18 @@ class Partida():
         """   
         
         if len(self.jugadores) == 4:
-            for 
+    
+            for i in self.jugadores:
+                valor = numpy.random.randint(0,1)
+                if valor == 1 and lista_valores.count(valor) == 2:
+                    i.equipo = 2
+                elif valor == 2 and lista_valores.count(valor) == 2:
+                    i.equipo = 1
+                else:
+                    i.equipo = valor
+        
+                
+                    
+                     
+                    
          

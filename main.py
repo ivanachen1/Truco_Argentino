@@ -1,5 +1,8 @@
 import numpy
 import Card
+import Jugador
+
+
 
 class Partida():
     
@@ -7,7 +10,8 @@ class Partida():
         self.turnos = turnos
         self.jugadores = []
         self.equipos = (1,2)
-    
+        self.puntos = {1:0,2:0}
+        self.mesa = []
     
     def inicio_variables(self,cantidad_jugadores):
         """
@@ -52,8 +56,6 @@ class Partida():
                 else:
                     i.equipo = valor
         
-                
+
                     
-                     
-                    
-         
+    

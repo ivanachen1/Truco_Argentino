@@ -15,8 +15,7 @@ class Card():
         self.palo = ["oro","copa","espada","basto"]
         self.number = list(range(1,8)) + [10,11,12]
         self.cantidad = cantidad
-        self.carta = []
-    
+        self.carta = list(carta)
     
     def crear_mazo(self):
         """
@@ -28,17 +27,17 @@ class Card():
                 carta = str(number) + palo
                 self.carta.append(carta)
                 self.cantidad += 1
-        
-        return mazo
+                
         
     
-    def sumar_una_carta(self):
+    @staticmethod
+    def sumar_una_carta(objeto_jugador):
         """
         [El metodo otorga 1 carta a la mano]
         
         """
         
-        self.cantidad += 1
+        objeto_jugador.cantidad += 1
     
     def disminuir_una_carta(self):
         """
@@ -46,26 +45,16 @@ class Card():
         """
         self.cantidad -= 1
     
-    def crear_mano(self,mazo):
+    def crear_mano(self,objeto_jugador):
         """
         Crea la mano de cartas
         """
         
-        while self.cantidad < 4:
+        while objeto_jugador.cantidad < 4:
             carta_tomada = np.random.choice(mazo.carta)
-            self.sumar_una_carta()
+            Card.sumar_una_carta(objeto_jugador)
             mazo.disminuir_una_carta()
-            self.carta.append(carta_tomada)
-    
-
-
-    def mostrar_mano(self):
-        """
-        Muestra la mano del jugador
-        """
-        
-        for carta in self.carta:
-            print(carta,end= " ")
+            objeto_jugador.cartas.append(carta_tomada)
     
         
     def jugar_carta(self,carta_jugador):        
@@ -80,23 +69,7 @@ class Card():
         self.sumar_una_carta()
         
     
-class Jugador():
-    def __init__(self,cantidad,cartas,equipo):
-        """[summary]
 
-        Args:
-            cantidad ([int]): [Cantidad de jugadores]
-            cartas ([list]): [Son las cartas del jugador]
-        """
-        self.cantidad = cantidad
-        self.cartas = list(cartas)
-        self.equipo = equipo
-    
-    def mano_del_jugador(self,mano):
-        """
-        Reparto y otorgo cartas al jugador y se las muestro
-        
-        """
         
         
         

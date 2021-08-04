@@ -1,8 +1,12 @@
-import numpy as np 
+import numpy as np
+import Mazo 
 
 
 class Card():
-    def __init__(self,palo,number,cantidad,carta):
+    
+    path = "C:\Users\iachenbach\Documents\GitHub\Truco_Argentino\valores_cartas"    
+    
+    def __init__(self,palo,number,valor_envido,nombre_carta,valor_truco):
         """
         Genero los atributos de la clase carta
         que son el palo, el numero, y la cantidad
@@ -12,25 +16,17 @@ class Card():
             number ([list]): [lista de numeros]
             cantidad ([type]): [description]
         """
-        self.palo = ["oro","copa","espada","basto"]
-        self.number = list(range(1,8)) + [10,11,12]
-        self.cantidad = cantidad
-        self.carta = list(carta)
-    
-    def crear_mazo(self):
-        """
-        Crea el mazo de cartas
-        """
+        # Una sola carta tiene 1 atributo, el mazo tiene este init
+        self.palo = palo
+        self.number = number
+        self.valor_truco = valor_truco
+        self.valor_envido = valor_envido
         
-        for palo in self.palo:
-            for number in self.number:
-                carta = str(number) + palo
-                self.carta.append(carta)
-                self.cantidad += 1
-                
-        
+        self.nombre_carta = nombre_carta 
+                 
     
     @staticmethod
+    # Al redefinir la clase carta hay que reescribir el metodo
     def sumar_una_carta(objeto_jugador):
         """
         [El metodo otorga 1 carta a la mano]
@@ -39,24 +35,29 @@ class Card():
         
         objeto_jugador.cantidad += 1
     
-    def disminuir_una_carta(self):
+    @staticmethod
+    # Al redefinir la clase carta hay que reescribir el metodo
+    def disminuir_una_carta(objeto_jugador):
         """
-        [El metodo disminuye la cantidad de cartas de la mano]
+        [El metodo disminuye la cantidad de cartas de la mano
         """
         self.cantidad -= 1
     
-    def crear_mano(self,objeto_jugador):
+    # Al redefinir la clase carta hay que reescribir el metodo
+    def crear_mano(self,objeto_jugador,objeto_mazo):
         """
         Crea la mano de cartas
         """
         
-        while objeto_jugador.cantidad < 4:
-            carta_tomada = np.random.choice(mazo.carta)
+        while objeto_jugador.cartas < 4:
+            
+            carta_tomada = np.random.choice(objeto_mazo.cartas)
+            
             Card.sumar_una_carta(objeto_jugador)
-            mazo.disminuir_una_carta()
+            Mazo.objeto_mazo.quitar_carta()
             objeto_jugador.cartas.append(carta_tomada)
     
-        
+    # Al redefinir la clase carta hay que reescribir el metodo   
     def jugar_carta(self,carta_jugador):        
         """
         Juego la carta en la mesa.Disminuyo del jugador y aumento en la mesa
@@ -66,7 +67,7 @@ class Card():
         #Le quito la carta al jugador de la mano
         carta.carta.remove(carta_jugador)
         
-        self.sumar_una_carta()
+        self.disminuir_una_carta()
         
     
 

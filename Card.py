@@ -26,22 +26,21 @@ class Card():
                  
     
     @staticmethod
-    # Al redefinir la clase carta hay que reescribir el metodo
-    def sumar_una_carta(objeto_jugador):
+    def sumar_una_carta(objeto_jugador,carta):
         """
         [El metodo otorga 1 carta a la mano]
         
         """
         
-        objeto_jugador.cantidad += 1
+        objeto_jugador.cartas.append(carta)
     
     @staticmethod
     # Al redefinir la clase carta hay que reescribir el metodo
-    def disminuir_una_carta(objeto_jugador):
+    def disminuir_una_carta(objeto_jugador,carta):
         """
         [El metodo disminuye la cantidad de cartas de la mano
         """
-        self.cantidad -= 1
+        objeto_jugador.cartas.remove(carta)
     
     # Al redefinir la clase carta hay que reescribir el metodo
     def crear_mano(self,objeto_jugador,objeto_mazo):
@@ -53,8 +52,10 @@ class Card():
             
             carta_tomada = np.random.choice(objeto_mazo.cartas)
             
-            Card.sumar_una_carta(objeto_jugador)
+            self.sumar_una_carta(carta_tomada)
+            
             Mazo.objeto_mazo.quitar_carta()
+            
             objeto_jugador.cartas.append(carta_tomada)
     
     # Al redefinir la clase carta hay que reescribir el metodo   

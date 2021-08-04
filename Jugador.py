@@ -6,10 +6,9 @@ class Jugador():
             cantidad ([int]): [Cantidad de jugadores]
             cartas ([list]): [Son las cartas del jugador]
         """
-        self.mano = []
-        self.cartas = list(cartas)
-        self.equipo = equipo
-        self.posicion = posicion
+        self.cartas = []
+        self.equipo = None
+        self.posicion = 0
         self.turno = False
         self.nombre = nombre
     
@@ -21,8 +20,8 @@ class Jugador():
         if len(self.cartas) == 0:
             print("El jugador no tiene cartas")
         else:
-            for indice,carta in enumerate(self.cartas):
-                print("Carta {}, Numero {} ".format(indice+1,carta))
+            for carta in enumerate(self.cartas):
+                print(carta.nombre_carta)
     
     def jugar_carta_elegida(self,objeto_mesa,carta_del_jugador):
         """

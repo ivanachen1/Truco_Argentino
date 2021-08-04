@@ -4,7 +4,6 @@ import Jugador
 import Mesa 
 
 
-
 class Partida():
     
     def __init__(self,turnos):
@@ -15,7 +14,17 @@ class Partida():
         self.mesa = []
         self.sub_partidas = 0
         self.orden_de_partida = []
+        
+    @classmethod 
+    def crear_partida(cls):
+        """
+        Este metodo crea un objeto de la clase partida y lo retorna
+        """
     
+        partida = Partida()
+        
+        return partida
+        
     def inicio_variables(self,cantidad_jugadores):
         """
         [Inicio todas las variables del juego]
@@ -23,11 +32,14 @@ class Partida():
         Args:
             cantidad_jugadores ([type]): [description]
         """
+        
+        
         if cantidad_jugadores == 2:
             
             jugador1 = Card.Jugador()
             jugador2 = Card.Jugador()
             lista_jugadores =[jugador1,jugador2]
+            
             for i in lista_jugadores:
                 self.jugadores.append(i)
             
@@ -41,7 +53,8 @@ class Partida():
             lista_jugadores =[jugador1,jugador2,jugador3,jugador4]
             for i in lista_jugadores:
                 self.jugadores.append(i)
-
+        
+        
         
     def armar_equipo(self):
         """
@@ -72,28 +85,13 @@ class Partida():
         se vuelve a mezclar. Es un fin de ciclo de juego.
         Este metodo activa el booleano de turno del jugador 
         """
+        # Recordar = Declare la variable partida como global
         
         if self.sub_partidas == 0:
-            if len(self.jugadores) == 2:
-                jugador_primer_turno = numpy.random.randint(1,2)
-                if jugador_primer_turno == 1:
-                    self.jugadores[0].turno = True
-                else:
-                    self.jugadores[1].turno = True                  
-            elif len(self.jugadores) == 4:
-                jugador_primer_turno = numpy.random.randint(1,4)
-                
-                if jugador_primer_turno == 1:
-                    self.jugadores[0].turno = True
-                
-                elif jugador_primer_turno == 2:
-                    self.jugadores[1].turno = True
-                
-                elif jugador_primer_turno == 3:
-                    self.jugadores[2].turno = True
-                
-                else:
-                    self.jugadores[3].turno = True
+            return True
+        else:
+            return False
+           
                     
                 
     def orden_de_juego_primer_partida(self):
@@ -102,9 +100,8 @@ class Partida():
         subpartida.
         """            
         
-        orden_terminado = False
-        
         #Con este for pongo al primer jugador en el orden
+        
         for jugador in self.jugadores:
             if jugador.turno == True:
                 self.orden_de_partida.append(jugador)
@@ -114,7 +111,7 @@ class Partida():
         if self.jugadores == 2:
             self.orden_de_partida.append(self.jugadores[1])
         
-        elif self.jugadores == 4:
+        elif partida.jugadores == 4:
             
             contador = 0
             
@@ -165,6 +162,32 @@ class Partida():
                 else:
                     jugador.posicion = 1
         
+ 
+    
+    def asignar_primer_turno_aleatoriamente(self):
+        """
+        Este metodo busca aleatoriamente asignar el primer turno
+        del juego, pone en True el atributo turno de un solo objeto jugador
+
+        Args:
+            lista_jugadores ([List]): [Lista de objetos de la clase jugador]
+        """
+        
+        objeto_jugador_elegido = numpy.random.choice(self.jugadores)
+        
+        objeto_jugador_elegido.turno = True
+        
+    def cantidad_jugadores_partida(self):
+        """
+        Cuenta la cantidad de jugadores que hay en la partida
+        """     
+
+        if len(self.jugadores) == 2:
+            return 2
+        elif len(self.jugadores) == 4:
+            return 4
+        else:
+            print("hay mas jugadores que 4,revisar")
                     
     @classmethod
     def jugar(cls):
@@ -178,21 +201,39 @@ class Partida():
             print("Jugadores mal introducidos, puede jugar de a 2 o de a 4")
             cantidad_jugadores = input("De cuantos jugadores queres hacer la partida")
         
+        partida = Partida.crear_partida()
+        
         mesa = Mesa()
         
-        mesa.iniciar_variables(cantidad_jugadores)
+        partida.inicio_variables(cantidad_jugadores)
         
-        mesa.armar_equipo()
+        partida.asignar_primer_turno_aleatoriamente()
+        
+        partida.armar_equipo()
         
         in_game = True
         
         while in_game == True:
-            if self.sub_partidas == 0:
+            
+            if partida.cantidad_jugadores_partida() == 2:
                 
-                mesa.orden_de_juego_primer_partida()
-                
-                #Armar la logica de los turnos
-                
-        
+                if partida.primer_turno() == True:
+                    
+                    partida.orden_de_juego_primer_partida() 
+                    
+                    for jugador in partida.jugadores:
+                        if jugador.turno == True:
+                            #Le pido al jugador que carta quiere tirar a la mesa ---> Crear un método que busque la carta en la mano y la tire.
+                            carta = Jugador.jugador.elegir_carta_a_tirar()
+                            #No cuento con la herramienta de seleccionar con botones. ---> Solucion = Le muestro la carta y un número para que elija ese numero
+                            
+                            
+                            
+                    # Luego tengo que pedirle al jugador que elija una carta de su mano y la tire
+                    # tengo que cambiar el turno de un jugador y darselo al otro
+                    # tendria que contabilizar los turnos transcurridos en la ronda asi identifico los momentos del juego para cantar o tirar
+                    # 
+                    
+
         
                           

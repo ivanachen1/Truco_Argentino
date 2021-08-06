@@ -247,9 +247,10 @@ class Partida():
         
         return opcion
         
-    ###################################
-    ## METO LAS FUNCIONES DEL ENVIDO ##
-    ###################################   
+        
+        ###################################
+        ## METO LAS FUNCIONES DEL ENVIDO ##
+        ###################################   
     
     def circuito_envido(self,objeto_jugador):
         """
@@ -272,17 +273,24 @@ class Partida():
                 # aca verifico que un un jugador del mismo equipo no tenga la chance de aceptar o rechazar el tanto
                 continue
             else:
-                #funcion para mostrar el tablero del envido con las opciones del jugador
+                #funcion para mostrar el tablero del envido con las opciones del jugador---> tengo que referenciar al jugador 
                 respuesta = self.opciones_envido()
                 
                 # Aca pueden aceptar / cantar envido / cantar real envido / cantar falta envido / rechazar
                 
-                if respuesta == 5:
+                if respuesta == 1:
+                    #Funcion de calculo del envido
+                    #Funcion de mostrar que jugador tiene mas puntos de envido
+                    #sumar puntos al equipo ganador
+                    #Ver el tema de la parda del tanto
+                
+                elif respuesta == 5:
+                    print("espera sentado")
                     # Proceso de rechazo de envido
                     
                 
 
-    def opciones_envido(self,contador):
+    def opciones_envido(self):
         
         """
         Esta funcion muestra las opciones de envido del jugador 
@@ -298,9 +306,44 @@ class Partida():
         
         while respuesta != ["1","2","3","4"]:
             print("opcion mal introducida")
-             respuesta = input("Elija una opcion: ")
+            respuesta = input("Elija una opcion: ")
         
-        return respúesta
+        return respuesta
+    
+    
+    def rechazo_envido(self,objeto_jugador):
+        ### Tengo que ver como hacerle llegar un parametro para que en caso de un envido comun---> sume un punto al otro equipo y los diferentes escenarios
+        
+        """
+        Asigno los puntos en caso de rechazar el envido
+        
+        Args:
+            Objeto_jugador = Es el jugador que rechaza el envido
+        """
+
+        #Escenario 1 ---> Rechazo de un envido común
+        
+        if objeto_jugador.equipo == 1:
+            self.puntos[2] += 1
+        elif objeto_jugador.equipo == 2:
+            self.puntos[1] += 1
+            
+    def calculo_puntos_envido(self):
+        """
+        Esta funcion calcula los puntos de envido de cada jugador y retorna un Dataframe
+    
+        """        
+        
+        # Recorro los jugadores
+        lista_puntos = 0
+        
+        for jugador in self.jugadores:
+            lista_palos =[]
+            for carta in jugador.cartas:
+                listacarta.palo
+                
+            
+    
                     
     @classmethod
     def jugar(cls):
@@ -369,6 +412,3 @@ class Partida():
                                 
                
                     
-
-        
-                          

@@ -69,4 +69,70 @@ class Jugador():
             if idx == indice:
                 return carta
                   
-          
+    @property
+    def puntos_envido(self):
+        """
+        Este metodo calcula los puntos de envido del jugador.Lo denomino como propiedad
+        para acceder mas facil
+        
+        #Los puntos de envido que se calculen antes de tirar la primera carta asi quedan
+        """      
+        
+        palo_puntos = []
+        for carta in self.cartas:
+            palo_puntos.append((carta.nombre_carta,carta.palo,carta.valor_envido))
+        
+        lista_valores = [palo_puntos[0][2],palo_puntos[1][2],palo_puntos[2][2]]
+            
+        if (palo_puntos[0][1] == palo_puntos[1][1]) and (palo_puntos[1][1] == palo_puntos[2][1]):
+            #Tengo flor pero por ahora no me meto en ese tema. Calculo el mayor tanto
+            
+            valor_minimo = min(lista_valores)
+            
+            lista_valores.remove(valor_minimo)
+            
+            valor_envido = sum(lista_valores) + 20
+            
+            return  valor_envido
+        
+        elif (palo_puntos[0][1] != palo_puntos[1][1]) and (palo_puntos[1][1] != palo_puntos[2][1]) and (palo_puntos[0][1] != palo_puntos[2][1]):
+            
+            return max(lista_valores)
+        
+        elif (palo_puntos[0][1] != palo_puntos[1][1]) and (palo_puntos[1][1] == palo_puntos[2][1]):
+            
+            valor_quitar = palo_puntos[0][1]
+            
+            lista_valores.remove(valor_quitar)
+            
+            valor_envido = sum(lista_valores) + 20
+            
+            return valor_envido
+        
+        elif (palo_puntos[0][1] == palo_puntos[1][1]) and (palo_puntos[1][1] != palo_puntos[2][1]):
+            
+            valor_quitar = palo_puntos[2][1]
+            
+            lista_valores.remove(valor_quitar)
+            
+            valor_envido = sum(lista_valores) + 20
+            
+            return valor_envido
+        
+        elif (palo_puntos[0][1] == palo_puntos[2][1]) and (palo_puntos[1][1] != palo_puntos[2][1]):
+            
+            valor_quitar = palo_puntos[1][1]
+            
+            lista_valores.remove(valor_quitar)
+            
+            valor_envido = sum(lista_valores) + 20
+            
+            return valor_envido
+            
+            
+            
+            
+        
+            
+            
+        

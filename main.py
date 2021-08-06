@@ -9,6 +9,7 @@ class Partida():
     def __init__(self,turnos):
         self.turnos = turnos
         self.jugadores = []
+        # Esta tupla de self.equipos no tiene uso, podria analizar quitarla
         self.equipos = (1,2)
         self.puntos = {1:0,2:0}
         self.sub_partidas = 0
@@ -277,16 +278,25 @@ class Partida():
                 respuesta = self.opciones_envido()
                 
                 # Aca pueden aceptar / cantar envido / cantar real envido / cantar falta envido / rechazar
+                puntos_disputa = 1
                 
                 if respuesta == 1:
-                    #Funcion de calculo del envido
-                    #Funcion de mostrar que jugador tiene mas puntos de envido
-                    #sumar puntos al equipo ganador
-                    #Ver el tema de la parda del tanto
+                    
+                    #aceptacion
+                    puntos_disputa = 2
+                    jugador_ganador = self.mostrar_puntos_envido()
+                    
+                    self.sumar_puntos_envido_partida(objeto_jugador = jugador_ganador, puntos = puntos_disputa)
+                
+                elif respuesta == 2:
+                    print("Resolver el circuito de envido - envido ")
                 
                 elif respuesta == 5:
+                    
+                    #rechazo
+                    
                     print("espera sentado")
-                    # Proceso de rechazo de envido
+                    self.rechazo_envido(objeto_jugador = jugador, puntos = puntos_disputa)
                     
                 
 
@@ -311,8 +321,7 @@ class Partida():
         return respuesta
     
     
-    def rechazo_envido(self,objeto_jugador):
-        ### Tengo que ver como hacerle llegar un parametro para que en caso de un envido comun---> sume un punto al otro equipo y los diferentes escenarios
+    def rechazo_envido(self,objeto_jugador,puntos):
         
         """
         Asigno los puntos en caso de rechazar el envido
@@ -324,26 +333,67 @@ class Partida():
         #Escenario 1 ---> Rechazo de un envido común
         
         if objeto_jugador.equipo == 1:
-            self.puntos[2] += 1
+            self.puntos[2] += puntos
         elif objeto_jugador.equipo == 2:
-            self.puntos[1] += 1
+            self.puntos[1] += puntos
             
-    def calculo_puntos_envido(self):
+    def mostrar_puntos_envido(self):
         """
-        Esta funcion calcula los puntos de envido de cada jugador y retorna un Dataframe
-    
+        Esta funcion crea la forma de mostrar los puntos de envido
+        de cada jugador y los muestra y dice quien gano. Retorna el jugador ganador.
+        Resuelve = visualizacion de tanto, ganador del tanto con y sin parda
+        
         """        
         
-        # Recorro los jugadores
-        lista_puntos = 0
-        
         for jugador in self.jugadores:
-            lista_palos =[]
-            for carta in jugador.cartas:
-                listacarta.palo
-                
+            if jugador.puntos_envido == 1:
+                print("El jugador {} tiene {} punto".format(jugador.nombre,jugador.puntos_envido))
             
+            else:
+                print("El jugador {} tiene {} puntos".format(jugador.nombre,jugador.puntos_envido))
+                
+        
+        puntos_totales = -1
+        nombre_jugador = ""
+        for jugador in self.jugadores:
+            if puntos_totales < jugador.puntos_envido:
+                puntos_totales = jugador.puntos_envido
+                nombre_jugador = jugador.nombre
+                jugador_aux = jugador
+            elif puntos_totales == jugador.puntos_envido:
+                
+                if jugador_aux.posicion < jugador.posicion:
+                    
+                    puntos_totales = jugador.puntos_envido
+                    nombre_jugador = jugador.nombre
+                    jugador_aux = jugador
+                
+                else:
+                    continue
+                         
+            else:
+                continue
+                
+        print("El jugador {} ganó el envido".format(nombre_jugador))         
+            
+         
+         #con el codigo de abajo asigno los puntos, pero es mejor usar una funcion aparte
+         #self.puntos[jugador_aux.equipo] += 2    
+            
+        return jugador_aux
     
+    def sumar_puntos_envido_partida(self,objeto_jugador,puntos):
+        ### Tengo que resolver como le paso los puntos a adicionar
+        """
+        Esta funcion asigna los puntos ganados por el envido al equipo del jugador ganador
+
+        Args:
+            objeto_jugador ([Object Jugador]): [Objeto de la clase jugador ganador de la partida]
+        """
+        
+        self.puntos[objeto_jugador.equipo] += puntos 
+        
+        
                     
     @classmethod
     def jugar(cls):
@@ -375,6 +425,8 @@ class Partida():
         
         while in_game == True:
             
+            # Tengo que armar el circuito de reparto de cartas y de ahi asignar los puntos envido de los jugadores
+            
             if partida.cantidad_jugadores_partida() == 2:
                 
                 if partida.primer_turno() == True:
@@ -403,7 +455,10 @@ class Partida():
                             opcion = partida.opciones_de_juego()
                             
                             if opcion == 1:
-                                print("Desarrollar logica del envido")
+                                
+                                partida.circuito_envido()
+                                
+                                      
                             elif opcion == 2:
                                 print("desarrollar logica truco")
                             elif opcion == 3:

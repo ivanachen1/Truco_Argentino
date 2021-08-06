@@ -290,7 +290,8 @@ class Partida():
                 
                 elif respuesta == 2:
                     print("Resolver el circuito de envido - envido ")
-                
+                    self.envido_envido_circuito(objeto_jugador_canta = jugador)
+                    
                 elif respuesta == 5:
                     
                     #rechazo
@@ -300,26 +301,45 @@ class Partida():
                     
                 
 
-    def opciones_envido(self):
+    def opciones_envido(self,opcion):
         
         """
-        Esta funcion muestra las opciones de envido del jugador 
+        Esta funcion muestra las opciones de envido del jugador,
+        
+        Args:
+            opcion = es el menu de opciones a mostrar 
         """
-        
-        print("Opcion 1: Aceptar")
-        print("Opcion 2: Cantar envido")
-        print("Opcion 3: Cantar real envido")
-        print("Opcion 4: Cantar falta envido")
-        print("Opcion 5: Rechazar")
-        
-        respuesta = input("Elija una opcion: ")
-        
-        while respuesta != ["1","2","3","4"]:
-            print("opcion mal introducida")
+       
+        if opcion == 1: 
+            print("Opcion 1: Aceptar")
+            print("Opcion 2: Cantar envido")
+            print("Opcion 3: Cantar real envido")
+            print("Opcion 4: Cantar falta envido")
+            print("Opcion 5: Rechazar")
+            
             respuesta = input("Elija una opcion: ")
-        
-        return respuesta
+            
+            while respuesta != ["1","2","3","4"]:
+                print("opcion mal introducida")
+                respuesta = input("Elija una opcion: ")
+            
+
     
+        elif opcion == 2:
+            
+            print("Opcion 1: Aceptar")
+            print("Opcion 2: Cantar real envido")
+            print("Opcion 3: Cantar falta envido")
+            print("Opcion 4: Rechazar")
+            
+            respuesta = input("Elija una opcion: ")
+            
+            while respuesta != ["1","2","3","4"]:
+                print("opcion mal introducida")
+                respuesta = input("Elija una opcion: ")
+            
+
+        return respuesta
     
     def rechazo_envido(self,objeto_jugador,puntos):
         
@@ -329,8 +349,6 @@ class Partida():
         Args:
             Objeto_jugador = Es el jugador que rechaza el envido
         """
-
-        #Escenario 1 ---> Rechazo de un envido común
         
         if objeto_jugador.equipo == 1:
             self.puntos[2] += puntos
@@ -393,6 +411,34 @@ class Partida():
         
         self.puntos[objeto_jugador.equipo] += puntos 
         
+    
+    def envido_envido_circuito(self,objeto_jugador_canta):
+        """
+        Circuito del envido envido
+
+        Args:
+            objeto_jugador_canta ([Objeto Jugador]): [Es el jugador que canta el envido-envido]
+        """
+        # puntos en disputa puede ser un parametro siendo 4 por defecto
+        
+        # Preguntarle al jugador que quiere hacer
+        
+        opcion = self.opciones_envido()
+    
+        if opcion == 1:
+            
+            puntos_disputa = 4
+                jugador_ganador = self.mostrar_puntos_envido()
+                self.sumar_puntos_envido_partida(objeto_jugador = jugador_ganador,puntos= puntos_disputa)
+                
+        elif opcion == 4:
+            puntos_disputa = 2
+            # Ver como le paso el jugador que rechaza el envido
+           #rechazo_envido(objeto_jugador= , puntos = puntos_disputa)
+                    
+                
+    
+    
         
                     
     @classmethod

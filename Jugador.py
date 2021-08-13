@@ -1,17 +1,21 @@
+import numpy as np
+
 class Jugador():
-    def __init__(self,mano,cartas,equipo,posicion,nombre):
+    def __init__(self,mano,cartas,equipo,posicion,nombre,turno,es_maquina):
         """[summary]
 
         Args:
             cantidad ([int]): [Cantidad de jugadores]
             cartas ([list]): [Son las cartas del jugador]
         """
-        self.cartas = []
-        self.equipo = None
-        self.posicion = 0
-        self.turno = False
+        self.cartas = list(cartas)
+        self.mano = list(mano)
+        self.equipo = equipo
+        self.posicion = posicion
+        self.turno = turno
         self.nombre = nombre
-    
+        self.maquina = es_maquina
+        
     def show_mano_del_jugador(self,mano):
         """
         Muestro la mano del jugador
@@ -129,9 +133,44 @@ class Jugador():
             
             return valor_envido
             
-            
-            
-            
+    @classmethod
+    def crear_jugador_real(cls):
+        """
+        Este metodo crea un objeto de la clase jugador del tipo humano,con los datos del ser humano
+        """        
+        
+        mano = []
+        cartas = []
+        equipo = None
+        posicion = 0
+        turno = False
+        nombre = input("Escriba su nombre de jugador")
+        es_maquina = False
+
+        
+        jugador = Jugador(mano = mano, cartas = cartas, equipo = equipo, posicion = posicion, nombre = nombre, turno = turno, es_maquina= es_maquina)
+        
+        return jugador
+    
+    @classmethod 
+    def crear_jugador_maquina(cls):
+        """
+        Este metodo crea un objeto de la clase jugador del tipo maquina
+        
+        """
+        
+        mano = []
+        cartas = []
+        equipo = None
+        posicion = 0
+        turno = False
+        nombre = np.random.choice(['John', 'Juan', 'Jane', 'Jack', 'Jill', 'Jean',"Eva","Vicky","Sabrina","Chopa","Luisa"])
+        es_maquina = True
+
+        
+        jugador = Jugador(mano = mano, cartas = cartas, equipo = equipo, posicion = posicion, nombre = nombre, turno = turno, es_maquina= es_maquina)
+        
+        return jugador    
         
             
             

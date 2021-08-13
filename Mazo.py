@@ -70,5 +70,5 @@ class Mazo():
             #quito la carta
             objeto_mesa.remove(carta)
             # la meto en el mazo
-            self.cartas.append(carta.palo,carta.)
+            self.cartas.append(carta)
             

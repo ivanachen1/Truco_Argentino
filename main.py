@@ -265,40 +265,73 @@ class Partida():
 
         # me fijo si algun jugador del equipo contrario acepta o no
         
-        aceptacion = False
+        envido_aceptado = False
+        envido_rechazado = False
+        
+        
+        envido_real_envido_aceptado = False
+        envido_real_envido_rechazado = False
+        
+        envido_falta_envido_aceptado = False
+        envido_falta_envido_rechazado = False
+        
+        envido_envido_cantado = False
+        envido_envido_rechazado = False
+        envido_envido_aceptado = False
+        
+        envido_envido_real_envido_aceptado = False
+        envido_envido_real_envido_rechazado = False
+        
+        envido_envido_real_envido_falta_envido_aceptado = False
+        envido_envido_real_envido_falta_envido_rechazado = False
+        
+        
         
         for jugador in self.jugadores:
+            
             if jugador == objeto_jugador:
                 continue
             elif jugador.equipo == objeto_jugador.equipo:
                 # aca verifico que un un jugador del mismo equipo no tenga la chance de aceptar o rechazar el tanto
                 continue
             else:
-                #funcion para mostrar el tablero del envido con las opciones del jugador---> tengo que referenciar al jugador 
-                respuesta = self.opciones_envido()
-                
-                # Aca pueden aceptar / cantar envido / cantar real envido / cantar falta envido / rechazar
-                puntos_disputa = 1
-                
+                respuesta = self.opciones_envido(1)              
+                # Aca pueden aceptar / cantar envido / cantar real envido / cantar falta envido / rechazar              
                 if respuesta == 1:
-                    
                     #aceptacion
-                    puntos_disputa = 2
-                    jugador_ganador = self.mostrar_puntos_envido()
-                    
-                    self.sumar_puntos_envido_partida(objeto_jugador = jugador_ganador, puntos = puntos_disputa)
-                
+                    envido_aceptado = True
+                                   
                 elif respuesta == 2:
-                    print("Resolver el circuito de envido - envido ")
-                    self.envido_envido_circuito(objeto_jugador_canta = jugador)
+                    envido_envido_cantado = True
+                    jugador_canta = jugador
+                    break
                     
                 elif respuesta == 5:
-                    
                     #rechazo
+                    envido_rechazado = True
                     
-                    print("espera sentado")
-                    self.rechazo_envido(objeto_jugador = jugador, puntos = puntos_disputa)
                     
+        #print("Resolver el circuito de envido - envido ")
+        #self.envido_envido_circuito(objeto_jugador_canta = jugador)            
+        
+        puntos_disputa = 0
+        
+        if envido_aceptado == True:
+            puntos_disputa = 2
+        elif envido_rechazado == True:
+            puntos_disputa = 1 
+        elif envido_envido_cantado == True:
+            print("ver este sub circuito")
+            self.envido_envido_circuito(jugador_canta)
+            
+                
+            
+        
+        
+        
+        
+        jugador_ganador = self.mostrar_puntos_envido()
+        self.sumar_puntos_envido_partida(objeto_jugador = jugador_ganador, puntos = puntos_disputa)
                 
 
     def opciones_envido(self,opcion):
@@ -412,7 +445,7 @@ class Partida():
         self.puntos[objeto_jugador.equipo] += puntos 
         
     
-    def envido_envido_circuito(self,objeto_jugador_canta):
+    def envido_envido_respuesta(self,objeto_jugador_canta):
         """
         Circuito del envido envido
 
@@ -422,19 +455,9 @@ class Partida():
         # puntos en disputa puede ser un parametro siendo 4 por defecto
         
         # Preguntarle al jugador que quiere hacer
+        # Tengo que recorrer de una forma mas optima a los jugadores de tal forma de poder obtener al jugador que rechaza
         
-        opcion = self.opciones_envido()
-    
-        if opcion == 1:
-            
-            puntos_disputa = 4
-                jugador_ganador = self.mostrar_puntos_envido()
-                self.sumar_puntos_envido_partida(objeto_jugador = jugador_ganador,puntos= puntos_disputa)
-                
-        elif opcion == 4:
-            puntos_disputa = 2
-            # Ver como le paso el jugador que rechaza el envido
-           #rechazo_envido(objeto_jugador= , puntos = puntos_disputa)
+
                     
                 
     

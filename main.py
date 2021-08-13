@@ -24,35 +24,52 @@ class Partida():
         
         return partida
         
-    def inicio_variables(self,cantidad_jugadores):
+    def crear_jugadores(self,cantidad_jugadores,tipo_oponente):
         """
-        [Inicio todas las variables del juego]
+        [Inicio de los jugadores en el juego]
 
         Args:
-            cantidad_jugadores ([type]): [description]
+            cantidad_jugadores ([int]): [Cantidad de jugadores del juego]
+            tipo_oponente[Int]: Vale 1 si el resto de los jugadores son maquina. Vale 2 si el resto son humanos 
         """
-        
-        # ver aca como juegan las variables por defecto de la clase
+            
         
         if cantidad_jugadores == 2:
+            if tipo_oponente == 1:
+                
+                jugador_humano = Jugador.crear_jugador_real()
+                jugador_maquina = Jugador.crear_jugador_maquina()
+                
             
-            jugador1 = Jugador.Jugador()
-            jugador2 = Jugador.Jugador()
-            lista_jugadores =[jugador1,jugador2]
+                lista_jugadores =[jugador_maquina,jugador_humano]
             
-            for i in lista_jugadores:
-                self.jugadores.append(i)
+                for i in lista_jugadores:
+                    self.jugadores.append(i)
             
+            elif tipo_oponente == 2:
+                
+                for i in range(cantidad_jugadores):
+                    jugador_humano = Jugador.crear_jugador_real()
+                    self.jugadores.append(jugador_humano)
+                
+                
+                
+        if cantidad_jugadores == 4:
+            if tipo_oponente == 1:
+                
+                jugador_humano = Jugador.crear_jugador_real()
+                self.jugadores.append(jugador_humano)
+                
+                for jugador in range(3):
+                    jugador_maquina = Jugador.crear_jugador_maquina()
+                    self.jugadores.append(jugador_maquina)
+                    
+            elif tipo_oponente == 2:
+                
+                for i in range(4):
+                    jugador_humano = Jugador.crear_jugador_real()
+                    self.jugadores.append(jugador_humano)  
         
-        elif cantidad_jugadores == 4:
-            jugador1 = Jugador.Jugador()
-            jugador2 = Jugador.Jugador()
-            jugador3 = Jugador.Jugador()
-            jugador4 = Jugador.Jugador()
-            
-            lista_jugadores =[jugador1,jugador2,jugador3,jugador4]
-            for i in lista_jugadores:
-                self.jugadores.append(i)
         
         
         
@@ -266,11 +283,6 @@ class Partida():
         # me fijo si algun jugador del equipo contrario acepta o no
         
         envido_aceptado = False
-        envido_rechazado = False
-        
-        
-        envido_real_envido_aceptado = False
-        envido_real_envido_rechazado = False
         
         envido_falta_envido_aceptado = False
         envido_falta_envido_rechazado = False
@@ -295,6 +307,7 @@ class Partida():
                 # aca verifico que un un jugador del mismo equipo no tenga la chance de aceptar o rechazar el tanto
                 continue
             else:
+                # tengo que verificar que al menos un jugador responda# Ver como optimizar esta parte    
                 respuesta = self.opciones_envido(1)              
                 # Aca pueden aceptar / cantar envido / cantar real envido / cantar falta envido / rechazar              
                 if respuesta == 1:
@@ -307,8 +320,9 @@ class Partida():
                     break
                     
                 elif respuesta == 5:
-                    #rechazo
-                    envido_rechazado = True
+                    jugador_ganador = objeto_jugador
+                    break
+                 
                     
                     
         #print("Resolver el circuito de envido - envido ")
@@ -318,20 +332,39 @@ class Partida():
         
         if envido_aceptado == True:
             puntos_disputa = 2
-        elif envido_rechazado == True:
+            
+        elif envido_aceptado == False:
             puntos_disputa = 1 
+            
         elif envido_envido_cantado == True:
-            print("ver este sub circuito")
-            self.envido_envido_circuito(jugador_canta)
+            
+            respuesta = self.envido_envido_circuito(jugador_canta)
+            if respuesta[0] == 1:
+                puntos_disputa = 4
+                #Acepto
+              
+            elif respuesta[0] == 2:
+                #se canta real envido
+                #armar este circuito
+            elif respuesta[0] == 3:
+                #se canta falta_envido
+                #armar este circuito
+            elif respuesta == 4:
+                puntos_disputa = 2
+                #rechazo envido_envido
+                
+                
             
                 
             
-        
-        
-        
-        
-        jugador_ganador = self.mostrar_puntos_envido()
-        self.sumar_puntos_envido_partida(objeto_jugador = jugador_ganador, puntos = puntos_disputa)
+                
+            
+        if envido_aceptado == True:
+            jugador_ganador = self.mostrar_puntos_envido()
+            self.sumar_puntos_envido_partida(objeto_jugador = jugador_ganador, puntos = puntos_disputa)
+            
+        elif envido_aceptado == False:
+            self.sumar_puntos_envido_partida(objeto_jugador = jugador_ganador, puntos = puntos_disputa)
                 
 
     def opciones_envido(self,opcion):
@@ -457,11 +490,41 @@ class Partida():
         # Preguntarle al jugador que quiere hacer
         # Tengo que recorrer de una forma mas optima a los jugadores de tal forma de poder obtener al jugador que rechaza
         
-
-                    
-                
+                   
+    def envido_envido_circuito(self,jugador_canta):
+      """
+      Esta funcion es el corazon del envido envido
+      
+      Args:
+        Jugador_canta = Es un objeto de la clase jugador que canta
+      """              
     
-    
+        for jugador in self.jugadores:
+            if jugador == jugador_canta:
+                continue
+            elif jugador.equipo == jugador_canta.equipo:
+                continue
+            else:
+                respuesta = self.opciones_envido(2)
+                if respuesta != 4:
+                    jugador_canta = jugador
+                break
+        
+        if respuesta == 1:
+            #Acepto el envido_envido
+            return (1,jugador_canta)
+        elif respuesta == 4:
+            #rechazo el envido_envido
+            return (4,jugador_canta)
+        elif respuesta == 2:
+            #Se canta real envido
+            return (2,jugador_canta)
+        elif respuesta == 3:
+            # se canta falta_envido
+            return (3,jugador_canta)
+            
+    def real_envido_circuito(self,jugador_canta,tipo):
+               
         
                     
     @classmethod
@@ -476,6 +539,14 @@ class Partida():
             print("Jugadores mal introducidos, puede jugar de a 2 o de a 4")
             cantidad_jugadores = input("De cuantos jugadores queres hacer la partida")
         
+        tipo_oponente = input("¿Desea jugador contra el sistema o contra la maquina?,Marque 1 para sistema o Marque 2 para jugar contra personas")
+        
+        while tipo_oponente not in  ["1","2"]:
+            print("Tipo mal colocado, es 1 o 2")
+             tipo_oponente = input("¿Desea jugador contra el sistema o contra la maquina?,Marque 1 para sistema o Marque 2 para jugar contra personas")
+        
+        tipo_oponente = int(tipo_oponente)
+        
         partida = Partida.crear_partida()
         
         mesa = Mesa()
@@ -484,7 +555,7 @@ class Partida():
         
         mazo.crear_mazo()
         
-        partida.inicio_variables(cantidad_jugadores)
+        partida.crear_jugadores(cantidad_jugadores,jugadores_reales,tipo_oponente)
         
         partida.asignar_primer_turno_aleatoriamente()
         
@@ -532,7 +603,4 @@ class Partida():
                                 print("desarrollar logica truco")
                             elif opcion == 3:
                                 print("Logica de jugar la carta")
-                                
-                                
-               
-                    
+

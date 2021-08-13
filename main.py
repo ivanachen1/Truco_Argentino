@@ -339,14 +339,17 @@ class Partida():
         elif envido_envido_cantado == True:
             
             respuesta = self.envido_envido_circuito(jugador_canta)
+            
             if respuesta[0] == 1:
                 puntos_disputa = 4
                 #Acepto
               
             elif respuesta[0] == 2:
-                #se canta real envido
-                #armar este circuito
+                print("circuito")
+                respuesta = self.real_envido_circuito()
+                
             elif respuesta[0] == 3:
+                print("Circuito")
                 #se canta falta_envido
                 #armar este circuito
             elif respuesta == 4:
@@ -354,11 +357,7 @@ class Partida():
                 #rechazo envido_envido
                 
                 
-            
-                
-            
-                
-            
+                      
         if envido_aceptado == True:
             jugador_ganador = self.mostrar_puntos_envido()
             self.sumar_puntos_envido_partida(objeto_jugador = jugador_ganador, puntos = puntos_disputa)
@@ -403,6 +402,23 @@ class Partida():
             while respuesta != ["1","2","3","4"]:
                 print("opcion mal introducida")
                 respuesta = input("Elija una opcion: ")
+        
+        
+        elif opcion == 3:
+            #real envido
+            
+            print("Opcion 1: Aceptar")
+            print("Opcion 2: Cantar falta envido")
+            print("Opcion 3: rechazar")
+            
+            respuesta = input("Elija una opcion: ")
+            
+            while respuesta != ["1","2","3","3"]:
+                print("opcion mal introducida")
+                respuesta = input("Elija una opcion: ")
+        
+    
+                
             
 
         return respuesta
@@ -491,13 +507,13 @@ class Partida():
         # Tengo que recorrer de una forma mas optima a los jugadores de tal forma de poder obtener al jugador que rechaza
         
                    
-    def envido_envido_circuito(self,jugador_canta):
-      """
-      Esta funcion es el corazon del envido envido
-      
-      Args:
-        Jugador_canta = Es un objeto de la clase jugador que canta
-      """              
+    def envido_envido_circuito(self,jugador_canta):  
+        """
+        Esta funcion es el corazon del envido envido
+        
+        Args:
+            Jugador_canta = Es un objeto de la clase jugador que canta
+        """              
     
         for jugador in self.jugadores:
             if jugador == jugador_canta:
@@ -523,8 +539,44 @@ class Partida():
             # se canta falta_envido
             return (3,jugador_canta)
             
-    def real_envido_circuito(self,jugador_canta,tipo):
-               
+    def real_envido_circuito(self,jugador_canta):
+        """Es el circuito de los real envido
+
+        Args:
+            jugador_canta ([Objeto_Jugador]): Es el objeto de la clase jugador que canta el real envido
+            tipo ([Tipo de real envido cantado]): [Tipo de real envido cantado]
+        
+        Return:
+            Retorna una tupla con el resultado de este circuito
+        """
+        
+        try:
+            type(tipo) == type(1)
+        except:
+            raise TypeError("El tipo de real envido no es un numero entero, corregir")
+        
+        
+        for jugador in self.jugadores:
+            if jugador == jugador_canta:
+                continue
+            elif jugador.equipo == jugador_canta.equipo:
+                continue
+            else:
+                respuesta = self.opciones_envido(3)
+        
+        
+        
+        
+        if respuesta == 1:
+            return 1
+            #real envido aceptado
+        elif respuesta == 2:
+            return 2
+        elif respuesta == 3:
+            return 3
+    
+            
+                  
         
                     
     @classmethod
@@ -543,7 +595,7 @@ class Partida():
         
         while tipo_oponente not in  ["1","2"]:
             print("Tipo mal colocado, es 1 o 2")
-             tipo_oponente = input("¿Desea jugador contra el sistema o contra la maquina?,Marque 1 para sistema o Marque 2 para jugar contra personas")
+            tipo_oponente = input("¿Desea jugador contra el sistema o contra la maquina?,Marque 1 para sistema o Marque 2 para jugar contra personas")
         
         tipo_oponente = int(tipo_oponente)
         
@@ -555,7 +607,7 @@ class Partida():
         
         mazo.crear_mazo()
         
-        partida.crear_jugadores(cantidad_jugadores,jugadores_reales,tipo_oponente)
+        partida.crear_jugadores(cantidad_jugadores,tipo_oponente)
         
         partida.asignar_primer_turno_aleatoriamente()
         
@@ -601,6 +653,7 @@ class Partida():
                                       
                             elif opcion == 2:
                                 print("desarrollar logica truco")
-                            elif opcion == 3:
                                 print("Logica de jugar la carta")
 
+            else:
+                print("En construccion")

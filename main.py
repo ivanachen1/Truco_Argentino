@@ -69,9 +69,7 @@ class Partida():
                 for i in range(4):
                     jugador_humano = Jugador.crear_jugador_real()
                     self.jugadores.append(jugador_humano)  
-        
-        
-        
+             
         
     def armar_equipo(self):
         """
@@ -133,8 +131,7 @@ class Partida():
             return True
         else:
             return False
-           
-                    
+                              
                 
     def orden_de_juego_primer_partida(self):
         """
@@ -213,7 +210,6 @@ class Partida():
                 else:
                     jugador.posicion = 1
         
- 
     
     def asignar_primer_turno_aleatoriamente(self):
         """
@@ -241,7 +237,7 @@ class Partida():
             print("hay mas jugadores que 4,revisar")
     
     
-    def opciones_de_juego(self,objeto_jugador):
+    def opciones_de_juego(self):
         """
         Esta funcion a extender le consulta al usuario que quiere hacer
         en su turno
@@ -253,11 +249,13 @@ class Partida():
         """
         print("1 - Jugar callado")
         print("2 - Cantar envido")
-        print("3- Cantar truco")
+        print("3 - Cantar Real envido")
+        print("4 - Cantar Falta envido")
+        print("5 - Cantar truco")
         
         opcion = input("¿Que desea hacer?")
         
-        while opcion not in ["1","2","3"]:
+        while opcion not in ["1","2","3","4","5"]:
             print("opcion mal introducida")
             opcion = input("¿Que desea hacer?")
 
@@ -270,7 +268,7 @@ class Partida():
         ## METO LAS FUNCIONES DEL ENVIDO ##
         ###################################   
     
-    def circuito_envido(self,objeto_jugador):
+    def circuito_envido(self,objeto_jugador, opcion = 2):
         """
         Esta funcion es la Padre del envido, arma el circuito completo de esta
         parte del juego
@@ -278,63 +276,137 @@ class Partida():
         
         Args:
             objeto_jugador ([Obj]): [Es un objeto de la clase jugador, es el jugador que canta el envido]
+        
         """
 
         # me fijo si algun jugador del equipo contrario acepta o no
         
+        
         envido_aceptado = False
-        
-        envido_falta_envido_aceptado = False
-        envido_falta_envido_rechazado = False
-        
+        envido_rechazado = False
+           
         envido_envido_cantado = False
-        envido_envido_rechazado = False
-        envido_envido_aceptado = False
+      
+        real_envido_cantado = False
         
-        envido_envido_real_envido_aceptado = False
-        envido_envido_real_envido_rechazado = False
+        falta_envido_cantado = False
+        falta_envido_aceptado = False
         
-        envido_envido_real_envido_falta_envido_aceptado = False
-        envido_envido_real_envido_falta_envido_rechazado = False
-        
-        
-        
-        for jugador in self.jugadores:
+        if opcion == 2:
+            #se comenzó cantando envido
             
-            if jugador == objeto_jugador:
-                continue
-            elif jugador.equipo == objeto_jugador.equipo:
-                # aca verifico que un un jugador del mismo equipo no tenga la chance de aceptar o rechazar el tanto
-                continue
-            else:
-                # tengo que verificar que al menos un jugador responda# Ver como optimizar esta parte    
-                respuesta = self.opciones_envido(1)              
-                # Aca pueden aceptar / cantar envido / cantar real envido / cantar falta envido / rechazar              
-                if respuesta == 1:
-                    #aceptacion
-                    envido_aceptado = True
-                                   
-                elif respuesta == 2:
-                    envido_envido_cantado = True
-                    jugador_canta = jugador
-                    break
+            for jugador in self.jugadores:
+                
+                if jugador == objeto_jugador:
+                    continue
+                elif jugador.equipo == objeto_jugador.equipo:
+                    # aca verifico que un un jugador del mismo equipo no tenga la chance de aceptar o rechazar el tanto
+                    continue
+                else:
+                    # tengo que verificar que al menos un jugador responda# Ver como optimizar esta parte    
+                    respuesta = self.opciones_envido(1)              
+                    # Aca pueden aceptar / cantar envido / cantar real envido / cantar falta envido / rechazar              
+                    if respuesta == 1:
+                        #aceptacion
+                        envido_aceptado = True
+                
+                                    
+                    elif respuesta == 2:
+                        #se canta envido-envido
+                        envido_envido_cantado = True
+                        jugador_canta = jugador
+                        break
                     
-                elif respuesta == 5:
-                    jugador_ganador = objeto_jugador
-                    break
-                 
+                    elif respuesta == 3:
+                        #se canta real envido
+                        real_envido_cantado = True
+                        jugador_canta = jugador
+                        break
                     
-                    
-        #print("Resolver el circuito de envido - envido ")
-        #self.envido_envido_circuito(objeto_jugador_canta = jugador)            
+                    elif respuesta == 4:
+                        # se canta falta envido
+                        falta_envido_cantado = True
+                        jugador_canta = jugador
+                        break
+                                
+                        
+                    elif respuesta == 5:
+                        #rechazo el envido cantado
+                        jugador_ganador = objeto_jugador
+                        envido_rechazado = True
+                        break
         
+        
+        elif opcion == 3:
+            #se comenzó cantando real envido
+            respuesta = self.real_envido_circuito(objeto_jugador)
+            if respuesta[0] == 1:
+                #acepto real envido
+                puntos_disputa = 3
+            elif respuesta[0] == 2:
+                #falta envido cantado
+                respuesta = self.falta_envido_circuito(respuesta[1])
+                if respuesta[0] == 1:
+                    falta_envido_cantado = True
+                    resultado = self.falta_envido_circuito(respuesta[1])
+                    if resultado == 1:
+                        #se acepta el falta envido
+                        falta_envido_aceptado = True
+                    else:
+                        # envido - envido - real envido - falta envido rechazado
+                        puntos_disputa = 3
+                        envido_aceptado = False
+                        envido_rechazado = True
+                        jugador_ganador = respuesta[1] 
+        
+        elif opcion == 4:
+            # falta envido cantado de una
+            respuesta = self.falta_envido_circuito(objeto_jugador)
+            if respuesta[0] == 1:
+                #se acepta el falta envido
+                falta_envido_aceptado = True
+            elif respuesta[0] == 2:
+                # se rechaza el falta envido cantado
+                jugador_ganador = respuesta[1]
+                puntos_disputa = 1 
+        
+                 
+     # Segunda parta de la función
+       
         puntos_disputa = 0
         
         if envido_aceptado == True:
             puntos_disputa = 2
-            
-        elif envido_aceptado == False:
-            puntos_disputa = 1 
+          
+        elif envido_rechazado == True:
+            puntos_disputa = 1
+        
+        elif real_envido_cantado == True:
+            respuesta = self.real_envido_circuito(jugador_canta)
+            if respuesta[0] == 1:
+                #acepto real envido
+                puntos_disputa = 3
+            elif respuesta[0] == 2:
+                #falta envido cantado
+                respuesta = self.falta_envido_circuito(jugador_canta)
+                if respuesta[0] == 1:
+                    falta_envido_cantado = True
+                    resultado = self.falta_envido_circuito(respuesta[1])
+                    if resultado == 1:
+                        #se acepta el falta envido
+                        falta_envido_aceptado = True
+                    else:
+                        # envido - envido - real envido - falta envido rechazado
+                        puntos_disputa = 3
+                        envido_aceptado = False
+                        envido_rechazado = True
+                        jugador_ganador = respuesta[1]
+                    
+            elif respuesta[0] == 3:
+                #real envido rechazado
+                puntos_disputa = 2
+                jugador_ganador = respuesta[1]
+                envido_rechazado = True
             
         elif envido_envido_cantado == True:
             
@@ -345,8 +417,36 @@ class Partida():
                 #Acepto
               
             elif respuesta[0] == 2:
+                # envido - envido - real envido cantado
                 print("circuito")
                 respuesta = self.real_envido_circuito()
+                if respuesta[0] == 1:
+                    # real envido aceptado
+                    puntos_disputa = 7
+                
+                elif respuesta[0] == 2:
+                    #falta envido cantado
+                    falta_envido_cantado = True
+                    resultado = self.falta_envido_circuito(respuesta[1])
+                    if resultado == 1:
+                        #se acepta el falta envido
+                        falta_envido_aceptado = True
+                    else:
+                        # envido - envido - real envido - falta envido rechazado
+                        puntos_disputa = 7
+                        envido_aceptado = False
+                        envido_rechazado = True
+                        jugador_ganador = respuesta[1]
+                         
+                
+                elif respuesta[0] == 3:
+                    #real envido rechazado
+                    puntos_disputa = 4
+                    envido_aceptado = False
+                    envido_rechazado = True
+                    jugador_ganador = respuesta[1]   
+                    
+                    
                 
             elif respuesta[0] == 3:
                 print("Circuito")
@@ -356,15 +456,28 @@ class Partida():
                 puntos_disputa = 2
                 #rechazo envido_envido
                 
-                
+        elif falta_envido_cantado == True:
+            respuesta = self.falta_envido_circuito()
+            if respuesta[0] == 1:
+                #se acepta el falta envido
+                falta_envido_aceptado = True
+            elif respuesta[0] == 2:
+                jugador_ganador = respuesta[1]
+            
+            # se puede aceptar o rechazar, calcular los puntos en disputa        
                       
         if envido_aceptado == True:
             jugador_ganador = self.mostrar_puntos_envido()
             self.sumar_puntos_envido_partida(objeto_jugador = jugador_ganador, puntos = puntos_disputa)
             
-        elif envido_aceptado == False:
+        elif envido_rechazado == True:
             self.sumar_puntos_envido_partida(objeto_jugador = jugador_ganador, puntos = puntos_disputa)
-                
+        
+        elif falta_envido_aceptado == True:
+            jugador_ganador = self.mostrar_puntos_envido()
+            puntos_disputa = self.calculo_puntos_falta_envido(jugador_ganador= jugador_ganador)
+            self.sumar_puntos_envido_partida(objeto_jugador = jugador_ganador, puntos = puntos_disputa)
+                       
 
     def opciones_envido(self,opcion):
         
@@ -375,7 +488,8 @@ class Partida():
             opcion = es el menu de opciones a mostrar 
         """
        
-        if opcion == 1: 
+        if opcion == 1:
+            #envido cantado 
             print("Opcion 1: Aceptar")
             print("Opcion 2: Cantar envido")
             print("Opcion 3: Cantar real envido")
@@ -391,6 +505,7 @@ class Partida():
 
     
         elif opcion == 2:
+            #envido envido
             
             print("Opcion 1: Aceptar")
             print("Opcion 2: Cantar real envido")
@@ -417,8 +532,17 @@ class Partida():
                 print("opcion mal introducida")
                 respuesta = input("Elija una opcion: ")
         
-    
-                
+        elif opcion == 4:
+            #falta envido cantado
+            
+            print("Opcion 1: Aceptar")
+            print("Opcion 2: rechazar")
+            
+            respuesta = input("Elija una opcion: ")
+            
+            while respuesta != ["1","2"]:
+                print("opcion mal introducida")
+                respuesta = input("Elija una opcion: ")  
             
 
         return respuesta
@@ -460,6 +584,7 @@ class Partida():
                 puntos_totales = jugador.puntos_envido
                 nombre_jugador = jugador.nombre
                 jugador_aux = jugador
+                
             elif puntos_totales == jugador.puntos_envido:
                 
                 if jugador_aux.posicion < jugador.posicion:
@@ -563,22 +688,114 @@ class Partida():
                 continue
             else:
                 respuesta = self.opciones_envido(3)
+                jugador_aux = jugador
         
         
         
         
         if respuesta == 1:
-            return 1
+            return (1,jugador_aux)
             #real envido aceptado
         elif respuesta == 2:
-            return 2
+            #falta envido cantado
+            return (2,jugador_aux)
         elif respuesta == 3:
-            return 3
+            #real envido rechazado
+            return (3,jugador_aux)
     
-            
-                  
+    def falta_envido_circuito(self,jugador_canta):
+        """
+        Este es el circuito del falta envido,tambien otorga los puntos en disputa.
+        """        
         
+        for jugador in self.jugadores:
+            if jugador == jugador_canta:
+                continue
+            elif jugador.equipo == jugador_canta.equipo:
+                continue
+            else:
+                respuesta = self.opciones_envido(4)
+                ultimo_jugador = jugador
+                break
+                  
+        if respuesta == 1:
+            #falta envido aceptado
+            return (1,None)
+                
+        elif respuesta == 2:
+            return (2,jugador_canta)
+            
+    def calculo_puntos_falta_envido(self,jugador_ganador):
+        """
+        Esta funcion calcula los puntos que se le suman al equipo del jugador ganador del falta envido
+        """    
+        
+        for equipo,puntos in self.puntos:
+            if equipo == jugador_ganador.equipo:
+                continue
+            else:
+                puntos_otro_equipo = puntos
+        
+        puntos_obtenidos = 30-puntos_otro_equipo
+        
+        return puntos_obtenidos
+    
+    ##############################
+    ##  FUNCIONES DEL TRUCO     ##              
+    ##############################
+    
+    def circuito_truco(self,objeto_jugador,tipo_truco_partida = 1 ,respuesta = 3):
+        """
+        Es el circuito padre del truco, esta funcion verifica si los jugadores mantienen el truco de 2 puntos
+        o a lo largo de la partida se va cantando Re-Truco o vale 4. 
+        
+        Args:
+            objeto_jugador = Es un objeto de la clase jugador. Es el jugador que canta.
+             
+            tipo_truco_partida = es un valor int que nos dice:
+                1 = se cantó truco comun
+                2 = Se canto Re truco
+                3 = Se canto Vale 4
+            
+            respuesta = es un calor int que nos dice:
+                1 - Rechazado
+                2 - Aceptado
+                3 - Sin respuesta
+            
+        Return:
+            Devuelve una tupla con el objeto jugador que acepta, con el valor de recanto si lo existe y con la respuesta     
+        """    
+        
+        for jugador in self.jugadores:
+            
+            if jugador == objeto_jugador:
+                continue
+            elif jugador.equipo == objeto_jugador.equipo:
+                continue
+            
+            else:
+                
+                print("crear una funcion con el menu de respuestas de truco")
+                respuesta_jugador = 1 # truco querido sin recanto
+                if respuesta_jugador == 1:
+                    tipo_truco_partida = 1
+                    respuesta = 2
+                    objeto_jugador = jugador
+                    break
+            
+                elif respuesta_jugador == 2:      # se canta re truco ----> Como necesito una nueva respuesta de que si se acepta o no, tengo que volver a ejecutar la funcion
+                    tipo_truco_partida = 2
+                    respuesta = 3
+                    objeto_jugador = jugador
+            
+            
+            return (objeto_jugador,tipo_truco_partida,respuesta)
                     
+                    
+                    
+                    
+        
+        
     @classmethod
     def jugar(cls):
         """
@@ -647,13 +864,27 @@ class Partida():
                             opcion = partida.opciones_de_juego()
                             
                             if opcion == 1:
-                                
-                                partida.circuito_envido()
-                                
-                                      
+                                #jugar callado
+                                print("Resolver esta opcion")
+                               
+                             
                             elif opcion == 2:
-                                print("desarrollar logica truco")
+                                # envido cantado
+                                print("pensar solucion")
+                                partida.circuito_envido(objeto_jugador= jugador, opcion = 2)    
+                                      
+                            elif opcion == 3:
+                                # real envido cantado de una
+                                partida.circuito_envido(objeto_jugador= jugador, opcion = 3) 
                                 print("Logica de jugar la carta")
 
+                            elif opcion == 4:
+                                # falta envido cantado de una
+                                partida.circuito_envido(objeto_jugador= jugador, opcion = 4) 
+                                
+                            elif opcion == 5:
+                                #se canta truco
+                                print("armar circuito truco")
+            
             else:
                 print("En construccion")

@@ -1,26 +1,29 @@
 import numpy
-import Card
-import Jugador
-import Mesa 
-import Mazo
+from Card import *
+from Jugador import Jugador
+from Mesa import Mesa 
+from Mazo import Mazo
 
 class Partida():
     
-    def __init__(self,turnos):
+    def __init__(self,turnos,sub_partidas,ronda,jugadores,puntos):
         self.turnos = turnos
-        self.jugadores = []
+        self.jugadores = list(jugadores)
         # Esta tupla de self.equipos no tiene uso, podria analizar quitarla
         self.equipos = (1,2)
-        self.puntos = {1:0,2:0}
-        self.sub_partidas = 0
+        self.puntos = dict(puntos)
+        self.sub_partidas = sub_partidas
+        self.ronda = ronda
         
     @classmethod 
     def crear_partida(cls):
         """
         Este metodo crea un objeto de la clase partida y lo retorna
         """
-    
-        partida = Partida()
+        
+        partida = Partida(turnos = 1, sub_partidas = 1, ronda = 1, puntos = {1: 0,2:0},jugadores = [])
+        
+        partida.crear_jugadores(cantidad_jugadores,tipo_oponente)
         
         return partida
         
@@ -127,7 +130,7 @@ class Partida():
         """
         # Recordar = Declare la variable partida como global
         
-        if self.sub_partidas == 0:
+        if self.sub_partidas == 1 and self.ronda == 1 and self.turno == 1:
             return True
         else:
             return False
@@ -149,10 +152,10 @@ class Partida():
                 jugador.posicion = 1
         
         
-        if self.jugadores == 2:
+        if len(self.jugadores) == 2:
             orden_de_partida.append(self.jugadores[1])
         
-        elif partida.jugadores == 4:
+        elif len(self.jugadores) == 4:
             
             contador = 0
             
@@ -608,7 +611,6 @@ class Partida():
         return jugador_aux
     
     def sumar_puntos_envido_partida(self,objeto_jugador,puntos):
-        ### Tengo que resolver como le paso los puntos a adicionar
         """
         Esta funcion asigna los puntos ganados por el envido al equipo del jugador ganador
 
@@ -744,7 +746,7 @@ class Partida():
     ##  FUNCIONES DEL TRUCO     ##              
     ##############################
     
-    def circuito_truco(self,objeto_jugador,tipo_truco_partida = 1 ,respuesta = 3):
+    def circuito_truco(self,objeto_jugador,tipo_truco_partida = 1 ,respuesta = 3,cartel_opciones = 1):
         """
         Es el circuito padre del truco, esta funcion verifica si los jugadores mantienen el truco de 2 puntos
         o a lo largo de la partida se va cantando Re-Truco o vale 4. 
@@ -762,6 +764,7 @@ class Partida():
                 2 - Aceptado
                 3 - Sin respuesta
             
+            cartel_opciones = Es el cartel a mostrarle al jugador
         Return:
             Devuelve una tupla con el objeto jugador que acepta, con el valor de recanto si lo existe y con la respuesta     
         """    
@@ -776,25 +779,174 @@ class Partida():
             else:
                 
                 print("crear una funcion con el menu de respuestas de truco")
-                respuesta_jugador = 1 # truco querido sin recanto
+                respuesta_jugador = self.opciones_truco(cartel_opciones)
                 if respuesta_jugador == 1:
                     tipo_truco_partida = 1
                     respuesta = 2
                     objeto_jugador = jugador
                     break
             
-                elif respuesta_jugador == 2:      # se canta re truco ----> Como necesito una nueva respuesta de que si se acepta o no, tengo que volver a ejecutar la funcion
+                elif respuesta_jugador == 2:
+                    # se canta re truco ----> Como necesito una nueva respuesta de que si se acepta o no, tengo que volver a ejecutar la funcion      
                     tipo_truco_partida = 2
                     respuesta = 3
                     objeto_jugador = jugador
+                    break
+                
+                elif respuesta_jugador == 3:
+                    # se canta Vale 4 ----> De acá tambien necesito una nueva respuesta     
+                    tipo_truco_partida = 4
+                    respuesta = 3
+                    objeto_jugador = jugador
+                    break
+                
+                elif respuesta_jugador == 4:
+                    # Se rechaza el truco cantado
+                    tipo_truco_partida = 1
+                    respuesta = 1
+                    objeto_jugador = jugador
+                       
+                    
             
             
             return (objeto_jugador,tipo_truco_partida,respuesta)
                     
                     
-                    
-                    
+    def opciones_truco(self,opcion_mostrar):
+        """
+        Este es el panel de opciones que se le mostrará al jugador para elegir si quiere o no el truco
         
+        Args:
+            opcion_mostrar = Es el panel a mostrar al jugador, dependiendo del tipo de truco en el cual esté la partida y el jugador que pueda cantar
+        
+        """                
+                    
+           
+        print("1 - Aceptar")
+        
+        if opcion_mostrar == 1:
+            # Primer panel de truco mostrado  
+            print("2 - Cantar Retruco")
+        
+        elif opcion_mostrar == 2:
+            # panel de Re truco
+            print("2 - Cantar Vale 4")
+        
+        print("3 - Rechazar")
+        
+        respuesta = input("Elija la opción: ")
+        
+        while respuesta not in ["1","2","3"]:
+            print("valor introducido incorrecatamente")
+            respuesta = input("Elija la opción: ")
+        
+        respuesta = int(respuesta)
+        
+        return respuesta
+        
+    def cambio_turno(self,objeto_jugador,objeto_mesa):
+        """
+        Esta funcion tira la carta, le quita el turno al jugador y se la asigna a otro
+        
+        """   
+        
+        carta = Jugador.objeto_jugador.elegir_carta_a_tirar()
+                                
+        Jugador.jugar_carta_elegida(objeto_jugador,objeto_mesa = objeto_mesa,carta_del_jugador = carta)
+                                
+        Jugador.perder_turno(objeto_jugador)
+                                
+        
+        for idx,jugador in enumerate(self.jugadores):
+            if jugador == objeto_jugador:
+                indice = idx
+                continue
+            elif len(self.jugadores - 1) == idx:
+                jugador_nuevo_turno = self.jugadores[0]
+                Jugador.ganar_turno(jugador_nuevo_turno)
+                
+            elif indice + 1 == idx:
+                jugador_nuevo_turno = self.jugadores[idx + 1]
+                Jugador.ganar_turno(jugador_nuevo_turno)
+            
+                            
+        self.turnos += 1
+        
+        if self.cantidad_jugadores_partida() == 2:
+            
+            if self.turnos == 2:
+                self.turnos = 1
+                self.ronda += 1
+                self.sub_partidas += 1 
+            else:
+                self.turnos = 1
+                
+        elif self.cantidad_jugadores_partida() == 4:
+            
+            if self.turnos == 4:
+                self.turnos = 1
+                self.ronda += 1
+                self.sub_partidas += 1
+            else:
+                self.turnos = 1
+                 
+    def asignacion_puntos_truco(self,equipo,tipo_truco_partida,respuesta):
+        """
+        Este metodo asigna los puntos del truco independientemente de si fue rechazado o aceptado
+        """                
+        
+        if respuesta == 1:
+            # rechazo 
+            if tipo_truco_partida == 1:
+                # rechazo del truco comun
+                
+                if equipo == 1:
+                    self.puntos[1] += 1
+                else:
+                    self.puntos[2] += 1
+                    
+            elif tipo_truco_partida == 2:
+                # rechazo el re truco
+                
+                if equipo == 1:
+                    self.puntos[1] += 2
+                else:
+                    self.puntos[2] += 2
+                    
+            elif tipo_truco_partida == 3:
+                # rechazo el vale 4
+                if equipo == 1:
+                    self.puntos[1] += 3
+                else:
+                    self.puntos[2] += 3                
+                                    
+        elif respuesta == 2:    
+            if tipo_truco_partida == 1:
+                # acepto del truco comun
+                
+                if equipo == 1:
+                    self.puntos[1] += 2
+                else:
+                    self.puntos[2] += 2
+                    
+            elif tipo_truco_partida == 2:
+                # acepto el re truco
+                
+                if equipo == 1:
+                    self.puntos[1] += 3
+                else:
+                    self.puntos[2] += 3
+                    
+            elif tipo_truco_partida == 3:
+                # acepto el vale 4
+                if equipo == 1:
+                    self.puntos[1] += 4
+                else:
+                    self.puntos[2] += 4     
+                                    
+                                    
+                                  
+                
         
     @classmethod
     def jugar(cls):
@@ -822,9 +974,7 @@ class Partida():
         
         mazo = Mazo.Mazo()
         
-        mazo.crear_mazo()
-        
-        partida.crear_jugadores(cantidad_jugadores,tipo_oponente)
+        mazo.crear_mazo() 
         
         partida.asignar_primer_turno_aleatoriamente()
         
@@ -832,32 +982,22 @@ class Partida():
         
         in_game = True
         
+        partida.orden_de_juego_primer_partida() 
+        
         while in_game == True:
             
-            # Tengo que armar el circuito de reparto de cartas y de ahi asignar los puntos envido de los jugadores
             
             if partida.cantidad_jugadores_partida() == 2:
                 
                 if partida.primer_turno() == True:
                     
-                    partida.orden_de_juego_primer_partida() 
-                    
-                    partida.turnos = 0
-                    
-                    for idx,jugador in enumerate(partida.jugadores):
+                    for jugador in partida.jugadores:
                         #verifico de quien es el turno
                         if partida.turnos == 1:
                             if jugador.turno == True:
                                 #Le pido al jugador que carta quiere tirar a la mesa ---> Crear un método que busque la carta en la mano y la tire.
-                                carta = Jugador.jugador.elegir_carta_a_tirar()
                                 
-                                Jugador.jugador.jugar_carta_elegida(objeto_mesa = mesa,carta_del_jugador = carta)
-                                
-                                jugador.perder_turno()
-                                
-                                jugador[idx +1].ganar_turno()
-                            
-                            partida.turnos += 1
+                                partida.cambio_turno(objeto_jugador= jugador, objeto_mesa= mesa)
                         
                         elif partida.turno == 2:
                             # puede cantar envido / cantar truco / jugar callado
@@ -865,26 +1005,79 @@ class Partida():
                             
                             if opcion == 1:
                                 #jugar callado
-                                print("Resolver esta opcion")
-                               
+                                
+                                partida.cambio_turno(objeto_jugador= jugador, objeto_mesa= mesa)
                              
                             elif opcion == 2:
                                 # envido cantado
-                                print("pensar solucion")
-                                partida.circuito_envido(objeto_jugador= jugador, opcion = 2)    
+                                
+                                partida.circuito_envido(objeto_jugador= jugador, opcion = 2)
+                                
+                                partida.cambio_turno(objeto_jugador= jugador, objeto_mesa= mesa)    
                                       
                             elif opcion == 3:
                                 # real envido cantado de una
                                 partida.circuito_envido(objeto_jugador= jugador, opcion = 3) 
-                                print("Logica de jugar la carta")
+                                
+                                partida.cambio_turno(objeto_jugador= jugador, objeto_mesa= mesa)
 
                             elif opcion == 4:
                                 # falta envido cantado de una
-                                partida.circuito_envido(objeto_jugador= jugador, opcion = 4) 
+                                partida.circuito_envido(objeto_jugador = jugador, opcion = 4) 
                                 
                             elif opcion == 5:
                                 #se canta truco
-                                print("armar circuito truco")
+                                
+                                jugador_responde,tipo_truco_partida,respuesta = partida.circuito_truco(objeto_jugador= jugador)
+                                # el resto de los params estan por defecto
+                                
+                                if respuesta == 1:
+                                    
+                                    if jugador_responde.equipo == 1:
+                                        equipo = 2
+                                    else:
+                                        equipo = 1
+                                    
+                                    partida.asignacion_puntos_truco(equipo = equipo, tipo_truco_partida = tipo_truco_partida, respuesta = respuesta)
+                                    
+                                    # Aca tengo que devolver las cartas al mazo y quitarselas a los jugadores y resetear la partida
+            
+                                # aceptacion de truco / re truco / vale 4
+                                elif respuesta == 2:
+                                    
+                                    if jugador_responde.equipo == 1 and tipo_truco_partida == 1:
+                                        # Se acepto el truco comun
+                                        print("ver como sigue el flujo acá")
+                                        print("los siguientes jugadores en el resto de la partida pueden cantar mas")
+                                        partida.cambio_turno(objeto_jugador= jugador, objeto_mesa= mesa)
+                                    
+                                    if jugador_responde.equipo == 1 and tipo_truco_partida == 2:
+                                        # Se acepto el re truco
+                                        print("ver como sigue el flujo acá")
+                                        print("los siguientes jugadores en el resto de la partida pueden cantar mas")
+                                        partida.cambio_turno(objeto_jugador= jugador, objeto_mesa= mesa)
+                                             
+                                        
+                                elif respuesta == 3:
+                                    # Aqui no hay una respuesta adicional y sigue la partida
+                                    
+                                    partida.cambio_turno(objeto_jugador= jugador, objeto_mesa= mesa)
+                                    
+
+                #elif partida.ronda > 1:
+                                        
+                                    
+                      
+                                    
+                                
             
             else:
                 print("En construccion")
+                
+                
+                
+                # Tengo que resolver:
+                # 1) El cambio de ronda
+                # sub partidas ---> Es cada partida conformada por 3 rondas y cada ronda tiene sus turnos
+                
+                # En la primer partida, debo otorgarle al jugador en posicion 1 el turno en True. Para el resto tengo que rotar a la derecha

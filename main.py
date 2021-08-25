@@ -23,8 +23,6 @@ class Partida():
         
         partida = Partida(turnos = 1, sub_partidas = 1, ronda = 1, puntos = {1: 0,2:0},jugadores = [])
         
-        partida.crear_jugadores(cantidad_jugadores,tipo_oponente)
-        
         return partida
         
     def crear_jugadores(self,cantidad_jugadores,tipo_oponente):
@@ -677,10 +675,7 @@ class Partida():
             Retorna una tupla con el resultado de este circuito
         """
         
-        try:
-            type(tipo) == type(1)
-        except:
-            raise TypeError("El tipo de real envido no es un numero entero, corregir")
+        
         
         
         for jugador in self.jugadores:
@@ -853,8 +848,12 @@ class Partida():
         carta = Jugador.objeto_jugador.elegir_carta_a_tirar()
                                 
         Jugador.jugar_carta_elegida(objeto_jugador,objeto_mesa = objeto_mesa,carta_del_jugador = carta)
+        
+        Mesa.agregar_carta_mesa(objeto_mesa, ronda = self.ronda, carta_tirada = carta, jugador = objeto_jugador, valor_carta= carta.valor_envido)
                                 
         Jugador.perder_turno(objeto_jugador)
+        
+        #verificacion_cambio_ronda = 
                                 
         
         for idx,jugador in enumerate(self.jugadores):
@@ -877,7 +876,9 @@ class Partida():
             if self.turnos == 2:
                 self.turnos = 1
                 self.ronda += 1
-                self.sub_partidas += 1 
+                self.sub_partidas += 1
+                jugador_ganador = Mesa.jugador_ganador_ronda(objeto_mesa, objeto_partida_jugadores= self.cantidad_jugadores_partida(), numero_ronda= self.ronda)
+                Jugador.ganar_turno(jugador_ganador) 
             else:
                 self.turnos = 1
                 
@@ -887,6 +888,8 @@ class Partida():
                 self.turnos = 1
                 self.ronda += 1
                 self.sub_partidas += 1
+                jugador_ganador = Mesa.jugador_ganador_ronda(objeto_mesa, objeto_partida_jugadores= self.cantidad_jugadores_partida(), numero_ronda= self.ronda)
+                Jugador.ganar_turno(jugador_ganador) 
             else:
                 self.turnos = 1
                  
@@ -970,6 +973,8 @@ class Partida():
         
         partida = Partida.crear_partida()
         
+        partida.crear_jugadores(cantidad_jugadores,tipo_oponente)
+        
         mesa = Mesa()
         
         mazo = Mazo.Mazo()
@@ -983,6 +988,7 @@ class Partida():
         in_game = True
         
         partida.orden_de_juego_primer_partida() 
+        
         
         while in_game == True:
             
@@ -1077,7 +1083,14 @@ class Partida():
                 
                 
                 # Tengo que resolver:
+                # Problema
                 # 1) El cambio de ronda
+                # para resolver el cambio de ronda tengo que resolver el tema de que jugador gano la ronda asi se quien tiene el primer turno de la segunda ronda
+                # tengo que mirar en la mesa que cartas hay y cuales valen mas que otras
+                #Solucion
+                # En la clase Mesa voy a crear un diccionario que tenga como clave el numero de ronda y como valor la lista de cartas tiradas y los jugadores que las tiraron
+                # DataFrame = (nro_ronda,carta_tirada,jugador que tiro la carta, y su valor) ---> De aca filtro quien gano la ronda y seteo el turno en True
+                
                 # sub partidas ---> Es cada partida conformada por 3 rondas y cada ronda tiene sus turnos
                 
                 # En la primer partida, debo otorgarle al jugador en posicion 1 el turno en True. Para el resto tengo que rotar a la derecha
